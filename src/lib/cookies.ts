@@ -8,12 +8,16 @@ function isSecure(c: Context<AppEnv>): boolean {
   return c.env.COOKIE_SECURE !== "false";
 }
 
+function cookiePath(c: Context<AppEnv>): string {
+  return c.env.COOKIE_PATH || "/";
+}
+
 export function setRefreshCookie(c: Context<AppEnv>, token: string): void {
   setCookie(c, REFRESH_COOKIE, token, {
     httpOnly: true,
     secure: isSecure(c),
     sameSite: "Lax",
-    path: "/auth",
+    path: cookiePath(c),
     maxAge: 604800
   });
 }
@@ -26,6 +30,6 @@ export function clearRefreshCookie(c: Context<AppEnv>): void {
   deleteCookie(c, REFRESH_COOKIE, {
     secure: isSecure(c),
     sameSite: "Lax",
-    path: "/auth"
+    path: cookiePath(c)
   });
 }

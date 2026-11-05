@@ -17,6 +17,7 @@ Hono API на Cloudflare Workers для проєкту «Дизайнер». Д�
 - `GET /health` з перевіркою Supabase.
 - `GET /config` з 5 шрифтами, лімітами, кольорами, версіями текстів.
 - `GET /categories` з Supabase.
+- `GET /products` і `/products/:productId` з категорією, варіантами, зонами друку та знижками.
 - `POST /auth/register`, `/auth/login`, `/auth/refresh`, `/auth/logout`.
 - `POST /auth/password/forgot`, `/auth/password/reset`, `/auth/email/verify`.
 - `POST /auth/oauth/google`.
@@ -24,6 +25,10 @@ Hono API на Cloudflare Workers для проєкту «Дизайнер». Д�
 - Єдина форма помилок, request id, CORS, secure headers.
 
 Решта endpoint-ів описана в `des-docs/openapi.yaml`. Модулі-заготовки лежать у `src/routes/`, див. `src/routes/README.md`.
+
+## Frontend
+
+`des-frontend` — SvelteKit 2 на Cloudflare Workers. Публічні сторінки SSR/SSG, редактор CSR. `/api/*` проксіюється на цей Worker, тому браузер працює same-origin.
 
 ## Supabase (hosted)
 
@@ -59,6 +64,7 @@ SUPABASE_SERVICE_ROLE_KEY=...
 APP_ORIGIN=http://localhost:5173
 PUBLIC_ASSETS_BASE_URL=http://localhost:5173/assets
 COOKIE_SECURE=false
+COOKIE_PATH=/
 DEMO_MODE=true
 ```
 
@@ -110,7 +116,7 @@ bun run deploy          # wrangler deploy
 scripts/smoke.sh
 ```
 
-Скрипт перевіряє `/health`, `/config`, `/categories`, логін customer/admin, `/auth/me`, refresh і logout.
+Скрипт перевіряє `/health`, `/config`, `/categories`, `/products`, логін customer/admin, `/auth/me`, refresh і logout.
 
 ## CI/CD
 
@@ -127,6 +133,8 @@ GitHub Secrets:
 | `CLOUDFLARE_ACCOUNT_ID` | ID акаунта Cloudflare |
 
 Worker: `https://api.designer.r0ma.top`.
+
+Браузер у production ходить на `https://designer.r0ma.top/api`, а не напряму на `api.`. `api.` — upstream для SvelteKit.
 
 Runtime-секрети Worker задаються один раз:
 
@@ -148,6 +156,7 @@ bunx wrangler secret put SUPABASE_SERVICE_ROLE_KEY
 | `APP_ORIGIN` | Frontend origin для CORS і redirect |
 | `PUBLIC_ASSETS_BASE_URL` | База URL для шрифтів, напр. `http://localhost:5173/assets` |
 | `COOKIE_SECURE` | `false` на localhost, `true` на HTTPS |
+| `COOKIE_PATH` | Шлях refresh-cookie; у production `/` для same-origin `/api/auth/*` |
 | `DEMO_MODE` | `true` для dev-заглушок |
 
 `.dev.vars` не комітиться. У production:
@@ -160,16 +169,16 @@ wrangler secret put SUPABASE_SERVICE_ROLE_KEY
 
 - Access token: Supabase JWT, `Authorization: Bearer`.
 - `expiresIn` повертається з `session.expires_in`, без хардкоду.
-- Refresh token: HttpOnly cookie `refresh_token`, `Path=/auth`, 7 діб.
+- Refresh token: HttpOnly cookie `refresh_token`, `Path=/`, 7 діб. Same-origin через SvelteKit proxy.
 - Роль береться з `public.users`, а не з `user_metadata`.
 - `GET /auth/me` повертає permissions для UI.
-- CORS дозволяє `APP_ORIGIN`, `http://localhost:5173`, `http://localhost:4173` з credentials.
+- CORS дозволяє `APP_ORIGIN`, `http://localhost:5173`, `http://localhost:4173` з credentials. У production браузер ходить через `/api`, тому CORS не потрібен.
 - На localhost `COOKIE_SECURE=false`, інакше браузер не збереже cookie.
 
 ## Контракт
 
 - `contract/openapi.yaml`, `contract/schema.sql` і `contract/seed.sql` це синхронізовані копії з `des-docs`.
-- Поточна версія: `contract-v1.0.1`.
+- Поточна версія: `contract-v1.1.0`.
 - Не редагуйте їх вручну.
 - Оновлення: зміна в `des-docs`, tag, потім `scripts/sync-contract.sh contract-vX.Y.Z`.
 - Якщо `des-docs` лежить в іншому місці, задайте `DES_DOCS_PATH`.
@@ -179,12 +188,14 @@ wrangler secret put SUPABASE_SERVICE_ROLE_KEY
 
 ## Межі каркаса
 
-- Немає реалізації products, designs, uploads, cart, delivery, orders, moderation, admin.
+- Products реалізовані read-only: list/detail. Немає designs, uploads, cart, delivery, orders, moderation, admin.
 - Немає реальних LiqPay, Nova Poshta, Resend, R2, print worker.
 - Немає RLS-тестів і e2e.
-- CI є: lint, typecheck, test і dry-run bundle. Деплой на staging не автоматизований, бо потребує Cloudflare secrets.
+- CI + auto-deploy на `main` для Worker `des-backend`.
 
 ## Деплой
+
+Auto-deploy на push у `main`. Вручну:
 
 ```bash
 bun run deploy

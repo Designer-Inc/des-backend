@@ -7,7 +7,7 @@
 | `health.ts` | Готово | `GET /health` |
 | `config.ts` | Готово | `GET /config` |
 | `auth.ts` | Частково | register, login, refresh, logout, forgot, reset, email verify, Google, me |
-| `catalog.ts` | Частково | `GET /categories`; TODO products, designs, search |
+| `catalog.ts` | Частково | `GET /categories`, `/products`, `/products/:id`; TODO designs, search |
 | `designs.ts` | TODO | CRUD чернеток, publish, fork, versions, stats, reports |
 | `uploads.ts` | TODO | signed upload, complete, file delete |
 | `cart.ts` | TODO | quote, pricing, discounts, delivery estimate |

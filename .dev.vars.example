@@ -5,4 +5,5 @@ SUPABASE_SERVICE_ROLE_KEY=replace-with-service-role-key
 APP_ORIGIN=http://localhost:5173
 PUBLIC_ASSETS_BASE_URL=http://localhost:5173/assets
 COOKIE_SECURE=false
+COOKIE_PATH=/
 DEMO_MODE=true

@@ -7,6 +7,7 @@ export interface Env {
   APP_ORIGIN: string;
   PUBLIC_ASSETS_BASE_URL: string;
   COOKIE_SECURE?: string;
+  COOKIE_PATH?: string;
   DEMO_MODE?: string;
   APP_ENV?: string;
 }

@@ -27,6 +27,9 @@ curl -sS "$API_BASE/config" | python3 -c 'import json,sys; d=json.load(sys.stdin
 echo "== categories =="
 curl -sS "$API_BASE/categories" | python3 -c 'import json,sys; d=json.load(sys.stdin); print("categories:", len(d["items"])); [print("-", x["name"]) for x in d["items"]]'
 
+echo "== products =="
+curl -sS "$API_BASE/products?limit=3" | python3 -c 'import json,sys; d=json.load(sys.stdin); print("products:", d["total"]); [print("-", x["name"]) for x in d["items"]]'
+
 echo "== customer login =="
 customer_login="$(login "customer@demo.dyzainer.ua")"
 echo "$customer_login" | python3 -c 'import json,sys; d=json.load(sys.stdin); print("user:", d["user"]["email"], "role:", d["user"]["role"], "permissions:", len(d["permissions"]))'

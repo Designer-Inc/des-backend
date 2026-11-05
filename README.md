@@ -64,8 +64,8 @@ DEMO_MODE=true
 
 5. Налаштуйте Dashboard → Authentication → URL Configuration:
 
-- Site URL: `http://localhost:5173`
-- Redirect URLs: `http://localhost:5173/**` і production-frontend.
+- Site URL: `https://designer.r0ma.top`
+- Redirect URLs: `https://designer.r0ma.top/**`, `http://localhost:5173/**`, `http://127.0.0.1:5173/**`.
 - Email provider увімкнений; за потреби — Google.
 
 6. Запустіть API:
@@ -111,6 +111,32 @@ scripts/smoke.sh
 ```
 
 Скрипт перевіряє `/health`, `/config`, `/categories`, логін customer/admin, `/auth/me`, refresh і logout.
+
+## CI/CD
+
+`.github/workflows/backend.yml`:
+
+- `check` — lint, typecheck, tests і dry-run bundle на push/PR.
+- `deploy` — на push у `main` виконує `bunx wrangler deploy` у Cloudflare Workers.
+
+GitHub Secrets:
+
+| Secret | Призначення |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | Токен із правами Workers Scripts: Edit і Workers Routes: Edit |
+| `CLOUDFLARE_ACCOUNT_ID` | ID акаунта Cloudflare |
+
+Worker: `https://api.designer.r0ma.top`.
+
+Runtime-секрети Worker задаються один раз:
+
+```bash
+bunx wrangler secret put SUPABASE_URL
+bunx wrangler secret put SUPABASE_ANON_KEY
+bunx wrangler secret put SUPABASE_SERVICE_ROLE_KEY
+```
+
+`api.designer.r0ma.top` — custom domain. Для субдомена другого рівня в зоні `r0ma.top` потрібен Total TLS.
 
 ## Env
 

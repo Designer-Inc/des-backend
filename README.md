@@ -34,11 +34,11 @@ cp .dev.vars.example .dev.vars
 bun run dev
 ```
 
-Схема і seed:
+Схема і seed з синхронізованої копії:
 
 ```bash
-psql "$SUPABASE_DB_URL" -f ../des-docs/database/schema.sql
-psql "$SUPABASE_DB_URL" -f ../des-docs/database/seed.sql
+psql "$SUPABASE_DB_URL" -f contract/schema.sql
+psql "$SUPABASE_DB_URL" -f contract/seed.sql
 ```
 
 Демо-користувачі: `customer@demo.dyzainer.ua`, `author@demo.dyzainer.ua`, `moderator@demo.dyzainer.ua`, `admin@demo.dyzainer.ua`, `b2b@demo.dyzainer.ua`. Пароль: `DemoPass123!`.
@@ -83,9 +83,11 @@ wrangler secret put SUPABASE_SERVICE_ROLE_KEY
 
 ## Контракт
 
-- `openapi.yaml`, `database/schema.sql` і `database/seed.sql` беруться з `des-docs`.
-- Не редагуйте копії контракту в цьому репозиторії вручну.
-- Після релізу `des-docs` оновіть копії і додайте header `Synced from des-docs@contract-vX.Y.Z`.
+- `contract/openapi.yaml`, `contract/schema.sql` і `contract/seed.sql` це синхронізовані копії з `des-docs`.
+- Поточна версія: `contract-v1.0.0`.
+- Не редагуйте їх вручну.
+- Оновлення: зміна в `des-docs`, tag, потім `scripts/sync-contract.sh contract-vX.Y.Z`.
+- Якщо `des-docs` лежить в іншому місці, задайте `DES_DOCS_PATH`.
 - Перевірка: `bun run check`, потім smoke на staging.
 
 ## Межі каркаса

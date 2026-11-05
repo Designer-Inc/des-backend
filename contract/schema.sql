@@ -1,4 +1,4 @@
--- Synced from des-docs@contract-v1.0.0. Do not edit. Update des-docs first.
+-- Synced from des-docs@contract-v1.0.1. Do not edit. Update des-docs first.
 -- =============================================================================
 -- «Дизайнер»: повна схема PostgreSQL 15+ для Supabase
 -- Версія: 1.0 (05.11.2026)

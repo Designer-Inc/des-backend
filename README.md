@@ -143,7 +143,7 @@ wrangler secret put SUPABASE_SERVICE_ROLE_KEY
 ## Контракт
 
 - `contract/openapi.yaml`, `contract/schema.sql` і `contract/seed.sql` це синхронізовані копії з `des-docs`.
-- Поточна версія: `contract-v1.0.0`.
+- Поточна версія: `contract-v1.0.1`.
 - Не редагуйте їх вручну.
 - Оновлення: зміна в `des-docs`, tag, потім `scripts/sync-contract.sh contract-vX.Y.Z`.
 - Якщо `des-docs` лежить в іншому місці, задайте `DES_DOCS_PATH`.

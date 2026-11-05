@@ -24,7 +24,7 @@
    Варіант Б — SQL Editor: виконайте `supabase/migrations/20261105120000_init.sql`, потім `supabase/seed.sql`.
 
 3. Dashboard → Project Settings → API: скопіюйте URL, anon key і service_role key у `.dev.vars`.
-4. Dashboard → Authentication → URL Configuration: Site URL `http://localhost:5173`, redirect `http://localhost:5173/**`.
+4. Dashboard → Authentication → URL Configuration: Site URL `http://localhost:5173`, redirect `http://localhost:5173/**`, `http://127.0.0.1:5173/**`. Це тільки для твого dev-проєкту; не додавай localhost у production.
 5. Після `git pull` з новими міграціями: `bun run db:push` (проєкт уже linked).
 
 Seed створює demo-користувачів з `DemoPass123!`; запускайте його тільки на своєму dev-проєкті. Free-проєкт може заснути після тижня без активності — розбудіть у Dashboard.

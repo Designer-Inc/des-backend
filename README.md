@@ -73,8 +73,10 @@ DEMO_MODE=true
 5. Налаштуйте Dashboard → Authentication → URL Configuration:
 
 - Site URL: `https://designer.r0ma.top`
-- Redirect URLs: `https://designer.r0ma.top/**`, `http://localhost:5173/**`, `http://127.0.0.1:5173/**`.
+- Redirect URLs: `https://designer.r0ma.top/**`
 - Email provider увімкнений; за потреби — Google.
+
+Localhost-URL додавайте тільки у власний dev-проєкт (див. `CONTRIBUTING.md`). Production-проєкт локальні адреси не потребує.
 
 6. Запустіть API:
 

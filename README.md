@@ -39,10 +39,10 @@ bunx supabase link --project-ref <project-ref>
 2. Застосуйте міграції:
 
 ```bash
-bunx supabase db push
+bunx supabase db push --remote
 ```
 
-CLI запитає пароль бази. Для CI задайте `SUPABASE_ACCESS_TOKEN` і `SUPABASE_DB_PASSWORD`.
+CLI запитає пароль бази. Для CI задайте `SUPABASE_ACCESS_TOKEN` і `SUPABASE_DB_PASSWORD`. Без `--remote` CLI цілиться в локальний стек.
 
 3. Візьміть ключі в Dashboard → Project Settings → API.
 
@@ -96,7 +96,7 @@ bun run dev             # wrangler dev
 bun run db:link         # bunx supabase link
 bun run db:push         # застосувати міграції до hosted Supabase
 bun run db:push:dry     # показати міграції без застосування
-bun run db:diff         # diff схеми
+bun run db:diff         # diff схеми з hosted
 bun run typecheck       # tsc --noEmit
 bun run lint            # oxlint src
 bun run test            # vitest

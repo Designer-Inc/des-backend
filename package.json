@@ -5,6 +5,10 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
+    "supabase:start": "bunx supabase start",
+    "supabase:stop": "bunx supabase stop",
+    "supabase:status": "bunx supabase status",
+    "db:reset": "bunx supabase db reset",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src",
     "test": "vitest run",

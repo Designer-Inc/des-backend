@@ -34,7 +34,25 @@ cp .dev.vars.example .dev.vars
 bun run dev
 ```
 
-Схема і seed з синхронізованої копії:
+Локальний Supabase:
+
+```bash
+bunx supabase start
+bunx supabase db reset
+bunx supabase status -o env
+```
+
+`supabase db reset` застосовує `supabase/migrations/20261105120000_init.sql` і `supabase/seed.sql`.
+
+Потім запишіть у `.dev.vars` значення з `supabase status -o env`:
+
+```env
+SUPABASE_URL=http://127.0.0.1:54321
+SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
+```
+
+Схема і seed також лежать у синхронізованій копії `contract/`. Для чистого Postgres без Supabase CLI:
 
 ```bash
 psql "$SUPABASE_DB_URL" -f contract/schema.sql
@@ -46,13 +64,25 @@ psql "$SUPABASE_DB_URL" -f contract/seed.sql
 ## Скрипти
 
 ```bash
-bun run dev        # wrangler dev
-bun run typecheck  # tsc --noEmit
-bun run lint       # oxlint src
-bun run test       # vitest
-bun run check      # lint + typecheck + test
-bun run deploy     # wrangler deploy
+bun run dev             # wrangler dev
+bun run supabase:start  # bunx supabase start
+bun run supabase:stop   # bunx supabase stop
+bun run supabase:status # bunx supabase status
+bun run db:reset        # bunx supabase db reset
+bun run typecheck       # tsc --noEmit
+bun run lint            # oxlint src
+bun run test            # vitest
+bun run check           # lint + typecheck + test
+bun run deploy          # wrangler deploy
 ```
+
+Після старту backend і Supabase:
+
+```bash
+scripts/smoke.sh
+```
+
+Скрипт перевіряє `/health`, `/config`, `/categories`, логін customer/admin, `/auth/me`, refresh і logout.
 
 ## Env
 

@@ -1,4 +1,4 @@
--- Synced from des-docs@contract-v1.1.0. Do not edit. Update des-docs first.
+-- Synced from des-docs@contract-v1.1.1. Do not edit. Update des-docs first.
 -- =============================================================================
 -- «Дизайнер»: демо-дані для локальної розробки та staging
 --

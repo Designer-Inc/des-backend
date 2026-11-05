@@ -3,6 +3,7 @@ SUPABASE_ANON_KEY=replace-with-anon-key
 SUPABASE_SERVICE_ROLE_KEY=replace-with-service-role-key
 
 APP_ORIGIN=http://localhost:5173
+APP_ENV=development
 PUBLIC_ASSETS_BASE_URL=http://localhost:5173/assets
 COOKIE_SECURE=false
 COOKIE_PATH=/

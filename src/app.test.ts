@@ -37,4 +37,50 @@ describe("des-backend scaffold", () => {
     expect(response.status).toBe(401);
     expect(body.error.code).toBe("UNAUTHORIZED");
   });
+
+  it("allows localhost CORS outside production", async () => {
+    const response = await app.request(
+      "/config",
+      { headers: { Origin: "http://localhost:5173" } },
+      env
+    );
+
+    expect(response.headers.get("access-control-allow-origin")).toBe(
+      "http://localhost:5173"
+    );
+  });
+
+  it("blocks localhost CORS in production", async () => {
+    const productionEnv = {
+      ...env,
+      APP_ENV: "production",
+      APP_ORIGIN: "https://designer.r0ma.top"
+    } as unknown as Env;
+
+    const response = await app.request(
+      "/config",
+      { headers: { Origin: "http://localhost:5173" } },
+      productionEnv
+    );
+
+    expect(response.headers.get("access-control-allow-origin")).toBeNull();
+  });
+
+  it("allows the production origin in production", async () => {
+    const productionEnv = {
+      ...env,
+      APP_ENV: "production",
+      APP_ORIGIN: "https://designer.r0ma.top"
+    } as unknown as Env;
+
+    const response = await app.request(
+      "/config",
+      { headers: { Origin: "https://designer.r0ma.top" } },
+      productionEnv
+    );
+
+    expect(response.headers.get("access-control-allow-origin")).toBe(
+      "https://designer.r0ma.top"
+    );
+  });
 });

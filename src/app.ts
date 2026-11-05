@@ -17,10 +17,16 @@ app.use(
   cors({
     origin: (origin, c) => {
       const env = (c as unknown as { env?: Partial<AppEnv["Bindings"]> }).env;
+      const isProduction = env?.APP_ENV === "production";
+      const devOrigins = [
+        "http://localhost:5173",
+        "http://localhost:4173",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:4173"
+      ];
       const allowed = [
         env?.APP_ORIGIN,
-        "http://localhost:5173",
-        "http://localhost:4173"
+        ...(isProduction ? [] : devOrigins)
       ].filter((value): value is string => Boolean(value));
 
       return allowed.includes(origin) ? origin : null;

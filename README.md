@@ -64,6 +64,7 @@ SUPABASE_URL=https://<project-ref>.supabase.co
 SUPABASE_ANON_KEY=...
 SUPABASE_SERVICE_ROLE_KEY=...
 APP_ORIGIN=http://localhost:5173
+APP_ENV=development
 PUBLIC_ASSETS_BASE_URL=http://localhost:5173/assets
 COOKIE_SECURE=false
 COOKIE_PATH=/
@@ -164,6 +165,7 @@ bunx wrangler secret put SUPABASE_SERVICE_ROLE_KEY
 | `SUPABASE_ANON_KEY` | Anon key для Auth |
 | `SUPABASE_SERVICE_ROLE_KEY` | Service role для БД і admin Auth. Тільки Workers secret |
 | `APP_ORIGIN` | Frontend origin для CORS і redirect |
+| `APP_ENV` | `development` або `production`; `production` блокує localhost CORS |
 | `PUBLIC_ASSETS_BASE_URL` | База URL для шрифтів, напр. `http://localhost:5173/assets` |
 | `COOKIE_SECURE` | `false` на localhost, `true` на HTTPS |
 | `COOKIE_PATH` | Шлях refresh-cookie; у production `/` для same-origin `/api/auth/*` |
@@ -182,7 +184,7 @@ wrangler secret put SUPABASE_SERVICE_ROLE_KEY
 - Refresh token: HttpOnly cookie `refresh_token`, `Path=/`, 7 діб. Same-origin через SvelteKit proxy.
 - Роль береться з `public.users`, а не з `user_metadata`.
 - `GET /auth/me` повертає permissions для UI.
-- CORS дозволяє `APP_ORIGIN`, `http://localhost:5173`, `http://localhost:4173` з credentials. У production браузер ходить через `/api`, тому CORS не потрібен.
+- CORS дозволяє `APP_ORIGIN`; localhost дозволений тільки поза `APP_ENV=production`. У production браузер ходить через `/api`, тому CORS не потрібен.
 - На localhost `COOKIE_SECURE=false`, інакше браузер не збереже cookie.
 
 ## Контракт

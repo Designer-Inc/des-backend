@@ -31,7 +31,7 @@ Frontend локально ходить на `http://localhost:5173` і прок�
 4. Maintainer робить review і merge.
 5. Merge у `main` запускає `deploy`: спочатку міграції (якщо налаштований Supabase token), потім Cloudflare Worker.
 
-GitHub Free для private-репозиторіїв не має branch protection. Тому **не пуште напряму в `main`**; відкривайте PR. CODEOWNERS автоматично додає maintainer у review.
+`main` захищений: потрібен PR, зелені перевірки `check` і review від CODEOWNER. Прямий push у `main` заблокований (admin може bypass).
 
 ## Контракт
 

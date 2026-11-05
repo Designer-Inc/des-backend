@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import type { AppEnv } from "../env";
 import { adminClient } from "../lib/supabase";
 
-const VERSION = "0.1.0";
+const VERSION = "0.1.1";
 
 export const health = new Hono<AppEnv>();
 

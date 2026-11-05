@@ -47,7 +47,7 @@ app.use(
 app.get("/", (c) => {
   return c.json({
     name: "des-backend",
-    version: "0.1.0",
+    version: "0.1.1",
     docs: "https://github.com/Designer-Inc/des-docs"
   });
 });

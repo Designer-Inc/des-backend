@@ -1,8 +1,19 @@
 # AGENTS.md — des-backend
 
-Hono + TypeScript API на Cloudflare Workers. Auth, PostgreSQL і Storage — hosted Supabase.
+## Призначення файлу
 
-Джерело істини API та схеми: [`des-docs`](https://github.com/Designer-Inc/des-docs). `contract/` — синхронізована копія; не редагуй її вручну.
+Цей файл описує, **як агенти працюють з репозиторієм**. Це не звіт про поточний стан, не список реалізованих endpoint-ів і не changelog.
+
+Не оновлюй цей файл під кожну фічу, версію або зміну стану. Актуальний стан читай у:
+
+- `README.md`
+- `CONTRIBUTING.md`
+- `src/routes/README.md`
+- `contract/README.md`
+- `git log` і `git tag`
+- `des-docs` (`CHANGELOG.md`, `openapi.yaml`)
+
+`des-backend` — реалізація API. Джерело істини API та схеми — [`des-docs`](https://github.com/Designer-Inc/des-docs). `contract/` — синхронізована копія; не редагуй її вручну.
 
 ## Спочатку прочитай
 
@@ -12,76 +23,81 @@ Hono + TypeScript API на Cloudflare Workers. Auth, PostgreSQL і Storage — h
 - `contract/README.md`
 - `.dev.vars.example`
 - `wrangler.toml`
+- `package.json`
 
-Поточна версія контракту на 2026-11-05 — `contract-v1.1.2`; перевіряй `README.md` або `git log`.
+Не покладайся на цей файл як на джерело поточного стану.
 
-## Локальна база
+## Локальна розробка
 
-Production Supabase не використовуй для локальних тестів. Кожен розробник створює **власний безкоштовний** Supabase-проєкт:
-
-- створити проєкт у dashboard;
-- застосувати `supabase/migrations/*` і `supabase/seed.sql`;
-- взяти URL, anon key, service_role key у свій `.dev.vars`;
-- Auth URL Configuration для свого проєкту: `http://localhost:5173` + `http://localhost:5173/**`.
-
-Деталі — у `CONTRIBUTING.md`. `.dev.vars` не комітиться і не передається в PR.
-
-## Команди
-
-```bash
-bun install
-bun run dev          # wrangler dev, http://localhost:8787
-bun run check        # oxlint + tsc --noEmit + vitest
-bun run db:push      # міграції до linked Supabase
-bun run db:push:dry
-bun run db:diff
-bun run deploy       # wrangler deploy
-scripts/smoke.sh     # health, config, categories, products, auth
-scripts/sync-contract.sh contract-vX.Y.Z
-```
-
-Frontend локально ходить на `http://localhost:5173` і проксіює `/api` на `8787`.
-
-## Архітектура
-
-- `src/routes/health.ts`, `config.ts`, `auth.ts`, `catalog.ts` — робочі endpoint-и.
-- `designs`, `uploads`, `cart`, `delivery`, `orders`, `moderation`, `admin` — TODO-заготовки.
-- Помилки — через `AppError`, єдина форма `{ error: { code, message, details?, requestId } }`.
-- Гроші — тільки цілі копійки (`*Minor`).
-- Роль і permissions — з `public.users`, не з `user_metadata`.
-- Refresh cookie: `HttpOnly; Secure; SameSite=Lax; Path=/`; `COOKIE_PATH` конфігурується.
-- CORS: `APP_ORIGIN` завжди; localhost — тільки коли `APP_ENV !== "production"`.
-- `expiresIn` береться з `session.expires_in`, не хардкодиться.
+- Використовуй Bun і наявний lockfile.
+- Кожен розробник використовує **власний** безкоштовний Supabase-проєкт. Production Supabase не використовуй для локальних тестів.
+- `.dev.vars` зберігається тільки локально; не коміть його і не передавай у PR.
+- Застосування схеми/seed до власного проєкту — за інструкцією `CONTRIBUTING.md`.
+- Frontend локально працює окремо на `localhost:5173` і ходить через `/api` proxy.
+- Локальні Supabase-контейнери не є частиною цього репозиторію; сервіс hosted.
 
 ## Контракт і міграції
 
-- `contract/` і `supabase/seed.sql` генеруються з `des-docs`; не редагуй вручну.
+- Зміна API/схеми починається в `des-docs`.
+- Після tag контракту: `scripts/sync-contract.sh contract-vX.Y.Z`.
+- `contract/` і `supabase/seed.sql` — синхронізовані файли; не редагуй вручну.
 - `supabase/migrations/` — append-only. Не редагуй уже застосовану міграцію; додавай нову.
-- Зміна API/схеми починається в `des-docs`, потім tag, потім `scripts/sync-contract.sh`.
-- Seed — demo-only; не запускай на production без наміру.
+- Seed — demo-only. Не запускай його на production без наміру.
+- Не додавай endpoint без контракту й тестів.
+
+## Команди
+
+Використовуй scripts з `package.json`; не вигадуй нові команди й не змінюй package manager.
+
+```bash
+bun install
+bun run dev
+bun run check
+bun run db:push
+bun run db:push:dry
+bun run db:diff
+bun run deploy
+scripts/smoke.sh
+scripts/sync-contract.sh contract-vX.Y.Z
+```
+
+## Архітектурні правила
+
+- Помилки — через `AppError` і єдину форму відповіді з `requestId`.
+- Гроші — тільки цілі копійки (`*Minor`).
+- Роль і permissions — з `public.users`, не з `user_metadata`.
+- Refresh cookie: `HttpOnly; Secure; SameSite=Lax`; шлях конфігурується.
+- CORS: `APP_ORIGIN` завжди; localhost — тільки поза production.
+- `expiresIn` береться з `session.expires_in`, не хардкодиться.
+- Ці правила не змінюй без відповідної зміни контракту й тестів.
 
 ## CI/CD
 
-`.github/workflows/backend.yml`:
+- Workflow: `.github/workflows/backend.yml`.
+- PR-перевірки не отримують production-секретів.
+- Merge у `main` застосовує міграції (коли CI налаштований) і деплоїть Worker.
+- Секрети й потрібні змінні описані в `README.md`. Не друкуй їх і не коміть.
+- Не пуш у `main`: працюй через PR, green checks і review/CODEOWNER.
+- Conventional Commits. Без force-push.
 
-- `check` — lint, typecheck, tests, dry-run bundle; запускається на PR без секретів.
-- `deploy` — на push у `main`: `supabase db push --remote` (якщо задані `SUPABASE_ACCESS_TOKEN` і `SUPABASE_PROJECT_REF`), потім `wrangler deploy`.
+Якщо PR з форка, workflows можуть вимагати ручного approve від maintainer.
 
-Секрети: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`; variable `SUPABASE_PROJECT_REF`.
+## Безпека
 
-Публічний репозиторій: не додавай ключі, `.dev.vars`, логи з токенами.
+Репозиторій публічний. Не додавай:
 
-## PR
+- `.dev.vars`, service role, Cloudflare/Supabase токени;
+- логи або дампи з credentials;
+- персональні дані й production-дані в тестах.
 
-- Гілка `feat/...`, `fix/...`, `chore/...`; PR у `main`.
-- Обов'язково `bun run check` і зелений `check`.
-- 1 review + CODEOWNER; не пуш у `main`.
-- Conventional Commits; без force-push.
+Production-дані не є тестовими. Не запускай destructive-команди проти production.
 
-## Не роби
+## Заборонено
 
-- Не використовуй production Supabase для локальної розробки чи тестів.
-- Не редагуй `contract/` або застосовані міграції.
-- Не додавай локальні Supabase-контейнери; проєкт працює з hosted Supabase.
-- Не коміть `node_modules/`, `dist/`, `.wrangler/`, `.dev.vars`.
-- Не додавай нові endpoint-и без контракту й тестів.
+- Використовувати production Supabase для локальної розробки.
+- Редагувати `contract/` або вже застосовані міграції.
+- Додавати локальні Supabase-контейнери без зміни інструкцій/контракту.
+- Комітити `node_modules/`, `dist/`, `.wrangler/`, `.dev.vars`.
+- Додавати endpoint без контракту й тестів.
+- Пушити в `main`, робити force-push або переписувати теги.
+- Дублювати в цьому файлі поточний список реалізованих endpoint-ів або версію контракту.

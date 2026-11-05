@@ -4,7 +4,30 @@
 
 - Bun 1.4+
 - Доступ до GitHub-репозиторію.
-- **Окремий Supabase dev-проєкт** для локальних тестів. Не використовуйте production-проєкт `Designer` для розробки: там живі demo-дані й service role.
+- Власний безкоштовний Supabase project для локальної БД. Production-проєкт `Designer` для розробки не використовуйте.
+
+## Власна Supabase dev-база
+
+Кожен розробник створює окремий проєкт на своєму акаунті:
+
+1. https://supabase.com/dashboard → New project.
+2. Застосуйте схему і seed.
+
+   Варіант А — CLI:
+
+   ```bash
+   bunx supabase login
+   bunx supabase link --project-ref <your-ref>
+   bunx supabase db push --remote --include-seed --yes
+   ```
+
+   Варіант Б — SQL Editor: виконайте `supabase/migrations/20261105120000_init.sql`, потім `supabase/seed.sql`.
+
+3. Dashboard → Project Settings → API: скопіюйте URL, anon key і service_role key у `.dev.vars`.
+4. Dashboard → Authentication → URL Configuration: Site URL `http://localhost:5173`, redirect `http://localhost:5173/**`.
+5. Після `git pull` з новими міграціями: `bun run db:push` (проєкт уже linked).
+
+Seed створює demo-користувачів з `DemoPass123!`; запускайте його тільки на своєму dev-проєкті. Free-проєкт може заснути після тижня без активності — розбудіть у Dashboard.
 
 ## Локальний запуск
 
@@ -14,7 +37,7 @@ bun install
 cp .dev.vars.example .dev.vars
 ```
 
-Заповніть `.dev.vars` ключами dev-проєкту Supabase. Ключі видає maintainer; не комітьте `.dev.vars` і не передавайте service role у PR.
+Заповніть `.dev.vars` ключами **свого** dev-проєкту. Не комітьте `.dev.vars` і не передавайте service role у PR.
 
 ```bash
 bun run dev      # http://localhost:8787

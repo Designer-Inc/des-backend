@@ -2,6 +2,8 @@
 
 Hono API на Cloudflare Workers для проєкту «Дизайнер». Джерело істини контракту: [Designer-Inc/des-docs](https://github.com/Designer-Inc/des-docs).
 
+Перед роботою: [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Стек
 
 - Hono 4
@@ -131,6 +133,12 @@ GitHub Secrets:
 | --- | --- |
 | `CLOUDFLARE_API_TOKEN` | Токен із правами Workers Scripts: Edit і Workers Routes: Edit |
 | `CLOUDFLARE_ACCOUNT_ID` | ID акаунта Cloudflare |
+| `SUPABASE_ACCESS_TOKEN` | Опційно: автоматичні міграції БД на `main` |
+| `SUPABASE_DB_PASSWORD` | Опційно: пароль БД для CLI у CI |
+
+`SUPABASE_PROJECT_REF` — repository variable, не secret.
+
+На push у `main` deploy job спочатку виконує `supabase db push --remote`, якщо задані `SUPABASE_ACCESS_TOKEN` і `SUPABASE_PROJECT_REF`. Інакше міграції пропускаються з warning, а код деплоїться. Це означає, що без Supabase-токена зміни схеми не застосуються автоматично.
 
 Worker: `https://api.designer.r0ma.top`.
 

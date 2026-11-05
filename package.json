@@ -5,15 +5,14 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "supabase:start": "bunx supabase start",
-    "supabase:stop": "bunx supabase stop",
-    "supabase:status": "bunx supabase status",
-    "db:reset": "bunx supabase db reset",
+    "db:link": "bunx supabase link",
+    "db:push": "bunx supabase db push",
+    "db:push:dry": "bunx supabase db push --dry-run",
+    "db:diff": "bunx supabase db diff",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src",
     "test": "vitest run",
-    "check": "bun run lint && bun run typecheck && bun run test",
-    "dev:local": "bash scripts/dev-local.sh"
+    "check": "bun run lint && bun run typecheck && bun run test"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.0",

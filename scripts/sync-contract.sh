@@ -31,13 +31,18 @@ mkdir -p "${ROOT}/contract" "${ROOT}/supabase/migrations"
   cat "${SRC}/database/seed.sql"
 } > "${ROOT}/contract/seed.sql"
 
-# Local Supabase snapshot. db reset drops and recreates the local database,
-# so this file is overwritten instead of being an append-only migration.
-{
-  printf '%s\n' "-- ${HEADER_SQL}"
-  cat "${SRC}/database/schema.sql"
-} > "${ROOT}/supabase/migrations/20261105120000_init.sql"
+# Migrations are append-only once applied to a hosted project. Create the
+# initial snapshot only when it does not exist; later schema changes need a
+# new migration file instead of rewriting this one.
+INIT_MIGRATION="${ROOT}/supabase/migrations/20261105120000_init.sql"
+if [[ ! -f "${INIT_MIGRATION}" ]]; then
+  {
+    printf '%s\n' "-- ${HEADER_SQL}"
+    cat "${SRC}/database/schema.sql"
+  } > "${INIT_MIGRATION}"
+fi
 
+# Demo seed is applied manually, never by `supabase db push`.
 {
   printf '%s\n' "-- ${HEADER_SQL}"
   cat "${SRC}/database/seed.sql"

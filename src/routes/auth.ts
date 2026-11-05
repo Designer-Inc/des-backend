@@ -58,6 +58,7 @@ const oauthSchema = z.object({
 interface SessionLike {
   access_token: string;
   refresh_token: string;
+  expires_in: number;
 }
 
 async function sessionPayload(
@@ -71,7 +72,7 @@ async function sessionPayload(
   return {
     accessToken: session.access_token,
     tokenType: "Bearer" as const,
-    expiresIn: 900,
+    expiresIn: session.expires_in,
     user: profile,
     permissions: profile.permissions
   };
@@ -115,7 +116,7 @@ auth.post("/auth/register", async (c) => {
       user: profile,
       requiresEmailConfirmation: !data.session,
       accessToken: data.session?.access_token ?? null,
-      expiresIn: data.session ? 900 : null,
+      expiresIn: data.session?.expires_in ?? null,
       permissions: profile.permissions
     },
     201
@@ -156,7 +157,7 @@ auth.post("/auth/refresh", async (c) => {
   setRefreshCookie(c, data.session.refresh_token);
   return c.json({
     accessToken: data.session.access_token,
-    expiresIn: 900
+    expiresIn: data.session.expires_in
   });
 });
 

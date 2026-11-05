@@ -64,7 +64,8 @@ psql "$SUPABASE_DB_URL" -f contract/seed.sql
 ## Скрипти
 
 ```bash
-bun run dev             # wrangler dev
+bun run dev:local       # supabase start + db reset + .dev.vars + wrangler dev
+bun run dev             # wrangler dev без Supabase
 bun run supabase:start  # bunx supabase start
 bun run supabase:stop   # bunx supabase stop
 bun run supabase:status # bunx supabase status

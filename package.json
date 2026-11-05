@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "oxlint src",
     "test": "vitest run",
-    "check": "bun run lint && bun run typecheck && bun run test"
+    "check": "bun run lint && bun run typecheck && bun run test",
+    "dev:local": "bash scripts/dev-local.sh"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.0",

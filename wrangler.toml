@@ -3,9 +3,13 @@ main = "src/index.ts"
 compatibility_date = "2026-11-05"
 compatibility_flags = ["nodejs_compat"]
 
+routes = [
+  { pattern = "api.designer.r0ma.top", custom_domain = true }
+]
+
 [vars]
-APP_ENV = "development"
-APP_ORIGIN = "http://localhost:5173"
-PUBLIC_ASSETS_BASE_URL = "http://localhost:5173/assets"
-COOKIE_SECURE = "false"
-DEMO_MODE = "true"
+APP_ENV = "production"
+APP_ORIGIN = "https://designer.r0ma.top"
+PUBLIC_ASSETS_BASE_URL = "https://designer.r0ma.top/assets"
+COOKIE_SECURE = "true"
+DEMO_MODE = "false"

@@ -83,4 +83,16 @@ describe("des-backend scaffold", () => {
       "https://designer.r0ma.top"
     );
   });
+
+  it("returns the degraded health shape when the database is unavailable", async () => {
+    const response = await app.request("/health", {}, {} as unknown as Env);
+    const body = (await response.json()) as {
+      status: string;
+      checks: { database: string };
+    };
+
+    expect(response.status).toBe(503);
+    expect(body.status).toBe("degraded");
+    expect(body.checks.database).toBe("error");
+  });
 });

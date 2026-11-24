@@ -95,4 +95,14 @@ describe("des-backend scaffold", () => {
     expect(body.status).toBe("degraded");
     expect(body.checks.database).toBe("error");
   });
+
+  it("returns unique font ids from /config", async () => {
+    const response = await app.request("/config", {}, env);
+    const body = (await response.json()) as {
+      fonts: { id: string }[];
+    };
+    const ids = body.fonts.map((font) => font.id);
+
+    expect(new Set(ids).size).toBe(ids.length);
+  });
 });

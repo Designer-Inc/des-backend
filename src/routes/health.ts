@@ -7,6 +7,8 @@ const VERSION = "0.1.1";
 export const health = new Hono<AppEnv>();
 
 health.get("/health", async (c) => {
+  c.header("Cache-Control", "no-store");
+
   try {
     const { error } = await adminClient(c.env)
       .from("categories")
